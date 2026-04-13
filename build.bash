@@ -49,7 +49,7 @@ else
 fi
 
 echo "Configuring project with CMake..."
-if ! cmake .. -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" "${CMAKE_GENERATOR}"; then
+if ! PATH=$PATH:$CARGO_TARGET_DIR/release cmake .. -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" "${CMAKE_GENERATOR}"; then
   echo "CMake configuration failed!"
   exit 1
 fi
