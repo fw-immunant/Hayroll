@@ -539,14 +539,14 @@ namespace TSUtils {
 std::string freeCstrToString(const char *cstr)
 {
     std::string str(cstr);
-    ts::free((void *)cstr);
+    std::free((void *)cstr);
     return str;
 }
 
 TSRange freeTSRangePtrToTSRange(const ts::TSRange *range)
 {
     TSRange ret = *range;
-    ts::free((void *)range);
+    std::free((void *)range);
     return ret;
 }
 
