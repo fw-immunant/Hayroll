@@ -169,6 +169,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CARGO_PROFILE "dev")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CARGO_PROFILE "release")
+elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(CARGO_PROFILE "release")
 else()
     # No builtin equivalent unless we define our own profile.
     set(CARGO_PROFILE "dev")
