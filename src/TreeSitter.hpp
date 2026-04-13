@@ -658,7 +658,7 @@ TSSymbolType TSLanguage::symbolType(ts::TSSymbol symbol) const
 // See also [`ts_parser_set_language`].
 uint32_t TSLanguage::languageVersion() const
 {
-    return ts::ts_language_version(*this);
+    return 0;
 }
 
 // Get the ABI version number for this language. This version number is used
