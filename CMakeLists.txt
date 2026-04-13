@@ -134,7 +134,7 @@ target_include_directories(tree_sitter_config INTERFACE
     ${TREE_SITTER_C_PREPROC_INCLUDE_DIR}
 )
 target_link_libraries(tree_sitter_config INTERFACE
-    ${TREE_SITTER_DIR}/libtree-sitter.a
+    ${TREE_SITTER_DIR}/libtree-sitter.so
     ${TREE_SITTER_C_PREPROC_DIR}/src/parser.o
 )
 
