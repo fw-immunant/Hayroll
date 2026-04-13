@@ -77,12 +77,16 @@ find_package(Boost 1.65 REQUIRED CONFIG COMPONENTS stacktrace_backtrace)
 include_directories(${Boost_INCLUDE_DIRS})
 message(STATUS "Boost stacktrace_backtrace found: ${Boost_STACKTRACE_BACKTRACE_FOUND}")
 
+find_package(PkgConfig QUIET)
+
 # tree-sitter
-set(TREE_SITTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/tree-sitter")
+pkg_check_modules(TREE_SITTER REQUIRED IMPORTED_TARGET tree-sitter)
+
 set(TREE_SITTER_C_PREPROC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/tree-sitter-c_preproc")
 set(TREE_SITTER_INCLUDE_DIR "${TREE_SITTER_DIR}/lib/include")
 set(TREE_SITTER_C_PREPROC_INCLUDE_DIR "${TREE_SITTER_C_PREPROC_DIR}/bindings/c")
 
+set(TREE_SITTER_DIR ${TREE_SITTER_LIBDIR})
 message(STATUS "TREE_SITTER_DIR: ${TREE_SITTER_DIR}")
 message(STATUS "TREE_SITTER_C_PREPROC_DIR: ${TREE_SITTER_C_PREPROC_DIR}")
 
