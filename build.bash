@@ -7,7 +7,7 @@ RUST_PROFILE="debug" # Cargo profile directory name
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     -r | --release)
-      BUILD_TYPE="Release"
+      BUILD_TYPE="RelWithDebInfo"
       RUST_PROFILE="release"
       ;;
     -c | --clean) CLEAN=true ;;
