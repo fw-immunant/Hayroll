@@ -203,12 +203,6 @@ apt_packages="\
   curl autoconf automake libtool bear"
 
 need_apt_install=no
-# shellcheck disable=SC2086
-for apt_package in ${apt_packages}; do
-  if ! /usr/bin/dpkg-query --show "$apt_package" > /dev/null 2>&1; then
-    need_apt_install=yes
-  fi
-done
 
 if [[ "${need_apt_install}" == "yes" ]]; then
   echo "[*] Installing system packages via apt"
@@ -230,61 +224,6 @@ else
   check_version llvm-dev 17 19
 fi
 
-# --- Rust tool-chain (for c2rust & Maki) -------------------------------------
-if ! command -v rustc > /dev/null 2>&1; then
-  echo "Error: rustc (Rust tool-chain) not found."
-  echo "Please install Rust by referring to https://www.rust-lang.org/tools/install"
-  echo "Then restart this script."
-  exit 1
-else
-  echo "[*] rustc found, version: $(rustc --version)"
-  rust_version=$(rustc --version | awk '{print $2}')
-  rust_major=${rust_version%%.*}
-  rust_minor=$(echo "${rust_version}" | cut -d. -f2)
-  if [[ ${rust_major} -lt 1 || (${rust_major} -eq 1 && ${rust_minor} -lt 84) ]]; then
-    echo "Error: Rust 1.84+ required."
-    echo "Please run: rustup update stable"
-    exit 1
-  fi
-fi
-
-# --- C2Rust ------------------------------------------------------------------
-if ! command -v c2rust > /dev/null 2>&1; then
-  echo "[*] Installing c2rust ${C2RUST_TAG}"
-  export LLVM_CONFIG_PATH="${LLVM_CONFIG_EXE}"
-  run_quiet c2rust-install.log cargo install --git "${C2RUST_GIT}" --tag "${C2RUST_TAG}" --locked c2rust
-else
-  echo "[*] c2rust already installed, version: $(c2rust --version)"
-fi
-
-# --- Z3 ----------------------------------------------------------------------
-# z3 takes forever to build, so install through z3-solver, the Python wrapper,
-# which is published by z3 for each release.
-ensure_uv
-if uv tool list 2> /dev/null | grep -q "z3-solver ${Z3_VERSION}"; then
-  echo "[*] z3-solver ${Z3_VERSION} already installed via uv"
-else
-  run_quiet z3-solver-install.log uv tool install --force z3-solver@${Z3_VERSION}
-fi
-git_clone_or_checkout "z3" "${Z3_GIT}" "${Z3_TAG}"
-pushd z3 > /dev/null
-echo "[*] Installing Z3 with z3-solver prebuilt"
-mkdir -p build && cd build
-run_quiet z3-cmake.log cmake -DCMAKE_BUILD_TYPE=Release -DZ3_BUILD_PYTHON_BINDINGS=OFF ..
-# run_quiet z3-make.log make -j"$(nproc)"
-# Copy `libz3.so` and `z3` from `z3-solver` to `build/` so that installation works.
-ln -sf "$(uv tool dir)"/z3-solver/lib/python*/site-packages/z3/lib/libz3.so .
-ln -sf libz3.so "libz3.so.$(echo "${Z3_VERSION}" | awk -F. '{print $1 "." $2}')" # ${major}.${minor}
-ln -sf libz3.so "libz3.so.${Z3_VERSION}".0                                       # ${major}.${minor}.${patch}.0
-ln -sf "$(uv tool dir)/z3-solver/bin/z3" .
-run_quiet z3-install.log ${SUDO} cmake --install .
-popd > /dev/null
-
-# --- tree-sitter core --------------------------------------------------------
-git_clone_or_checkout "tree-sitter" "${TS_GIT}" "${TS_TAG}"
-echo "[*] Building tree-sitter core"
-run_quiet tree-sitter-make.log make -C tree-sitter -j"$(nproc)"
-
 # --- tree-sitter-c_preproc ---------------------------------------------------
 if [[ "${USE_LATEST}" == true ]]; then
   echo "[*] Fetching latest tree-sitter-c_preproc (main/HEAD)"
@@ -298,9 +237,10 @@ run_quiet tsc-preproc-make.log make -C tree-sitter-c_preproc -j"$(nproc)"
 # --- Maki --------------------------------------------------------------------
 if [[ "${USE_LATEST}" == true ]]; then
   echo "[*] Fetching latest Maki (main/HEAD)"
-  git_clone_or_checkout "Maki" "${MAKI_GIT}" "main"
+  #git_clone_or_checkout "Maki" "${MAKI_GIT}" "main"
 else
-  git_clone_or_checkout "Maki" "${MAKI_GIT}" "${MAKI_TAG}"
+  #git_clone_or_checkout "Maki" "${MAKI_GIT}" "${MAKI_TAG}"
+  :
 fi
 pushd Maki > /dev/null
 echo "[*] Building Maki"
