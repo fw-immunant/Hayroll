@@ -272,7 +272,7 @@ public:
             startWarp.programPoint = startWarp.programPoint.nextSibling();
             return {std::move(startWarp)};
         }
-        else assert(false);
+        else {assert(false); abort();}
     }
     
     Warp executeContinuousDefines(Warp && startWarp)
@@ -326,7 +326,7 @@ public:
                 std::string_view nameStr = name.textView();
                 segment->define(UndefinedSymbol{nameStr});
             }
-            else assert(false);
+            else {assert(false); abort();}
         }
 
         startWarp.defineAll(segment);
@@ -539,7 +539,7 @@ public:
                     prepend = MacroExpander::Prepend::NotDefined;
                 }
             }
-            else assert(false);
+            else {assert(false); abort();}
 
             // ifPremise -> ||(enterThenPremise)
             std::unordered_map<z3::expr, z3::expr, Z3ExprHash, Z3ExprEqual> premiseCollector;
@@ -605,7 +605,7 @@ public:
                     elseState.premise = enterElsePremise;
                     elseWarp.states.push_back(std::move(elseState));
                 }
-                else assert(false);
+                else {assert(false); abort();}
             }
 
             if (!thenWarp.states.empty() && !elseWarp.states.empty()) // Both branch possible
@@ -643,7 +643,7 @@ public:
                 }
                 return collectIfBodies(std::move(elseWarp));
             }
-            else assert(false); // There should be at least one state in one of the warps.
+            else {assert(false); abort();} // There should be at least one state in one of the warps.
         }
         else if (node.isSymbol(lang.preproc_else_s))
         {
@@ -669,7 +669,7 @@ public:
                 return {std::move(startWarp)};
             }
         }
-        else assert(false);
+        else {assert(false); abort();}
     }
 
     std::optional<Warp> executeInclude(Warp && startWarp)
