@@ -77,7 +77,7 @@ const ProgramPoint & symbolProgramPoint(const Symbol & symbol)
     {
         return std::get<FunctionSymbol>(symbol).def;
     }
-    else assert(false);
+    else {assert(false); abort();}
 }
 
 const TSNode & symbolBody(const Symbol & symbol)
@@ -90,7 +90,7 @@ const TSNode & symbolBody(const Symbol & symbol)
     {
         return std::get<FunctionSymbol>(symbol).body;
     }
-    else assert(false);
+    else {assert(false); abort();}
 }
 
 class SymbolSegment;
