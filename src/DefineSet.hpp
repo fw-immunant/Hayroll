@@ -12,6 +12,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include "DefinePrefix.hpp"
 #include "Util.hpp"
 
 namespace Hayroll
@@ -30,15 +31,15 @@ struct DefineSet
             z3::func_decl v = model[i];
             assert(v.arity() == 0); // only constants
             std::string z3VarName = v.name().str();
-            std::string prefix = z3VarName.substr(0, 3); // "def" or "val"
+            std::string prefix = z3VarName.substr(0, 3); // all DEFINE_PREFIX_... are 3 characters long
             std::string name = z3VarName.substr(3);
             z3::expr value = model.get_const_interp(v);
-            if (prefix == "val")
+            if (prefix == DEFINE_PREFIX_INTEGER)
             {
                 int64_t intValue = value.get_numeral_int64();
                 defines.emplace(name, intValue);
             }
-            else if (prefix == "def")
+            else if (prefix == DEFINE_PREFIX_PRESENT)
             {
                 bool boolValue = z3::eq(value, model.ctx().bool_val(true));
                 if (boolValue) defines.emplace(name, std::nullopt);
@@ -95,7 +96,7 @@ struct DefineSet
                 if (e.num_args() == 0)
                 {
                     std::string n = e.decl().name().str();
-                    if (n.starts_with("def") || n.starts_with("val"))
+                    if (n.starts_with(DEFINE_PREFIX_PRESENT) || n.starts_with(DEFINE_PREFIX_INTEGER))
                         seen.insert(n);
                 }
                 for (unsigned i = 0; i < e.num_args(); ++i) visit(e.arg(i));
@@ -109,12 +110,12 @@ struct DefineSet
             std::string prefix = fullName.substr(0, 3);
             std::string macroName = fullName.substr(3);
             auto it = defines.find(macroName);
-            if (prefix == "def")
+            if (prefix == DEFINE_PREFIX_PRESENT)
             {
                 bool defined = (it != defines.end());
                 assigns = assigns && (ctx.bool_const(fullName.c_str()) == ctx.bool_val(defined));
             }
-            else if (prefix == "val")
+            else if (prefix == DEFINE_PREFIX_INTEGER)
             {
                 int value = 0;
                 if (it != defines.end() && it->second.has_value()) value = it->second.value();

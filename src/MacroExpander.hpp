@@ -561,8 +561,8 @@ public:
             // Do not look up the symbol in the symbol table
             // Any symbol at this time will be treated as a symbolic value
             std::string_view name = node.textView();
-            std::string defName = std::format("def{}", name);
-            std::string valName = std::format("val{}", name);
+            std::string defName = std::format(DEFINE_PREFIX_PRESENT "{}", name);
+            std::string valName = std::format(DEFINE_PREFIX_INTEGER "{}", name);
 
             z3::expr def = ctx->bool_const(defName.c_str());
             z3::expr val = ctx->int_const(valName.c_str());
