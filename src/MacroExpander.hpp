@@ -300,6 +300,7 @@ public:
                     {
                         // Print the symbol type
                         assert(false);
+                        abort();
                     }
                 }
                 else
@@ -340,7 +341,7 @@ public:
                             {
                                 buffer.push_back(constToken0);
                             }
-                            else assert(false);
+                            else {assert(false); abort(); }
                             replaced = true;
                         }
                         else
@@ -466,7 +467,7 @@ public:
                 {
                     // Do nothing, undefined symbols do not have a body
                 }
-                else assert(false);
+                else { assert(false); abort(); }
             }
         }
 
@@ -630,7 +631,7 @@ public:
             {
                 return arg;
             }
-            else assert(false);
+            else {assert(false); abort();}
         }
         else if (node.isSymbol(lang.binary_expression_s))
         {
@@ -750,7 +751,7 @@ public:
                 z3::expr rshExpr = z3::bv2int(z3::ashr(z3::int2bv(BIT_WIDTH, left), z3::int2bv(BIT_WIDTH, right)), true);
                 return rshExpr;
             }
-            else assert(false);
+            else {assert(false); abort();}
         }
         else if (node.isSymbol(lang.parenthesized_expression_s))
         {
@@ -772,7 +773,7 @@ public:
             z3::expr condIteExpr = z3::ite(int2bool(condExpr), trueExpr, falseExpr);
             return condIteExpr;
         }
-        else assert(false);
+        else {assert(false); abort();}
     }
 
     z3::expr int2bool(const z3::expr & expr)
