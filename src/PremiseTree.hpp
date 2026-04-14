@@ -493,13 +493,15 @@ struct PremiseTree
             if (e.is_app() && e.num_args() == 0)
             {
                 std::string name = e.decl().name().str();
-                if (name.rfind("val", 0) == 0)
+                if (name.rfind(DEFINE_PREFIX_INTEGER, 0) == 0)
                 {
-                    throw std::runtime_error(std::format("Found value variable in boolean premise (valXXX not allowed): {}", name));
+                    throw std::runtime_error(std::format("Found integer variable in boolean premise ({}XXX not allowed): {}",
+                        DEFINE_PREFIX_INTEGER, name));
                 }
-                if (name.rfind("def", 0) != 0)
+                if (name.rfind(DEFINE_PREFIX_PRESENT, 0) != 0)
                 {
-                    throw std::runtime_error(std::format("Unexpected atom name (expecting defXXX): {}", name));
+                    throw std::runtime_error(std::format("Unexpected atom name (expecting {}XXX): {}",
+                        DEFINE_PREFIX_PRESENT, name));
                 }
                 atoms.insert(name);
                 return std::format("feature = \"{}\"", name);

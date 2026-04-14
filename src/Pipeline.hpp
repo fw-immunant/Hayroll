@@ -590,7 +590,7 @@ private:
                 result.rustFeatureAtoms.insert(candidate.rustFeatureAtoms.begin(), candidate.rustFeatureAtoms.end());
                 for (const auto & [name, _] : candidate.defineSet.defines)
                 {
-                    result.rustFeatureAtoms.insert("def" + name);
+                    result.rustFeatureAtoms.insert(DEFINE_PREFIX_PRESENT + name);
                 }
 
                 {
@@ -945,7 +945,7 @@ public:
                     {
                         for (auto [name, val] : defSet.defines)
                         {
-                            rustFeatureAtoms.insert("def" + name);
+                            rustFeatureAtoms.insert(DEFINE_PREFIX_PRESENT + name);
                         }
                     }
 

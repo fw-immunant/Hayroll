@@ -13,6 +13,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include "DefinePrefix.hpp"
 #include "TreeSitter.hpp"
 #include "IncludeTree.hpp"
 #include "ProgramPoint.hpp"
