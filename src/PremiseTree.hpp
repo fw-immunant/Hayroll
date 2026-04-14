@@ -73,7 +73,7 @@ struct PremiseTree
     }
 
     // Users shall not use this constructor directly.
-    // This it meant for std::make_shared<PremiseTree> to work.
+    // This is meant for std::make_shared<PremiseTree> to work.
     PremiseTree
     (
         const ProgramPoint & programPoint,
@@ -90,7 +90,7 @@ struct PremiseTree
         return !macroPremises.empty();
     }
 
-    // Retrieve the complete premese, a conjunction of all premises of its ancestors.
+    // Retrieve the complete premise, a conjunction of all premises of its ancestors.
     z3::expr getCompletePremise() const
     {
         z3::expr completePremise = premise;
