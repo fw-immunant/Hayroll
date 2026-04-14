@@ -264,7 +264,19 @@ struct CompileCommand
         for (const auto & item : json)
         {
             CompileCommand command;
-            command.arguments = item["arguments"].get<std::vector<std::string>>();
+            if (item.find("arguments") != item.end()) {
+                command.arguments = item["arguments"].get<std::vector<std::string>>();
+            } else {
+                auto commandStr = item["command"].get<std::string>();
+                std::stringstream ss(commandStr);
+                std::vector<std::string> words;
+
+                std::string tmp;
+                while(getline(ss, tmp, ' ')){
+                    words.push_back(tmp);
+                }
+                command.arguments = words;
+            }
             // Directory: require absolute, then weakly_canonical.
             command.directory = item["directory"].get<std::filesystem::path>();
             assert(command.directory.is_absolute());
