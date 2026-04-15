@@ -460,8 +460,23 @@ private:
                     inlinedStr = RustRefactorWrapper::runInliner(reapedStr);
                 }
 
+                // Officially assigned now
                 const std::size_t splitId = reapedStrs.size();
+                auto save = [&](const std::string_view s, const std::string& suffix, const std::string& name) {
+                    saveOutput
+                    (
+                        command,
+                        outputDir,
+                        projDir,
+                        s,
+                        std::format(".{}.{}", splitId, suffix),
+                        name,
+                        command.file.string(),
+                        splitId
+                    );
+                };
 
+                save(candidate.cuStr, "cu.c", "Compilation unit file");
                 const std::string seedingReportStr = json(seedingReportEntries).dump(4);
                 saveOutput
                 (
@@ -472,8 +487,7 @@ private:
                     std::format(".{}.cu.c", splitId),
                     "Compilation unit file",
                     command.file.string(),
-                    splitId,
-                    artifactSuffix
+                    splitId
                 );
                 saveOutput
                 (
@@ -484,96 +498,18 @@ private:
                     std::format(".{}.cpp2c", splitId),
                     "Maki cpp2c output",
                     command.file.string(),
-                    splitId,
-                    artifactSuffix
+                    splitId
                 );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    json(cpp2cRangesCompleted).dump(4),
-                    std::format(".{}.cpp2c.ranges.json", splitId),
-                    "Complemented Maki range summary",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    seedingReportStr,
-                    std::format(".{}.seeder_report.json", splitId),
-                    "Hayroll Seeder report",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    cuSeededStr,
-                    std::format(".{}.seeded.cu.c", splitId),
-                    "Hayroll Seeded compilation unit",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    c2rustStr,
-                    std::format(".{}.seeded.rs", splitId),
-                    "C2Rust output",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    cargoToml,
-                    std::format(".{}.Cargo.toml", splitId),
-                    "C2Rust Cargo.toml",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
-                saveOutput
-                (
-                    command,
-                    outputDir,
-                    projDir,
-                    reapedStr,
-                    std::format(".{}.reaped.rs", splitId),
-                    "Hayroll Reaper output",
-                    command.file.string(),
-                    splitId,
-                    artifactSuffix
-                );
+                save(json(cpp2cRangesCompleted).dump(4), "cpp2c.ranges.json", "Complemented Maki range summary");
+                save(seedingReportStr, "seeder_report.json", "Hayroll Seeder report");
+                save(cuSeededStr, "seeded.cu.c", "Hayroll Seeded compilation unit");
+                save(c2rustStr, "seeded.rs", "C2Rust output");
+                save(cargoToml, "Cargo.toml", "C2Rust Cargo.toml");
+                save(reapedStr, "reaped.rs", "Hayroll Reaper output");
 
                 if (enableInline)
                 {
-                    saveOutput
-                    (
-                        command,
-                        outputDir,
-                        projDir,
-                        inlinedStr,
-                        std::format(".{}.inlined.rs", splitId),
-                        "Hayroll Inliner output",
-                        command.file.string(),
-                        splitId,
-                        artifactSuffix
-                    );
+                    save(inlinedStr, "inlined.rs", "Hayroll Inliner output");
                 }
 
                 result.successfulDefineSets.push_back(candidate.defineSet);
