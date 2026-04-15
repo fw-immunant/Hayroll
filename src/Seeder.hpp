@@ -808,7 +808,7 @@ public:
         std::string locRefBegin;
         bool isPlaceholder;
         std::string premise;
-        // For merger to record which variants (identified via locBegins) ar included in this seed
+        // For merger to record which variants (identified via locBegins) are included in this seed
         std::vector<std::string> mergedVariants;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE
