@@ -21,6 +21,7 @@
 #include "TreeSitter.hpp"
 #include "TreeSitterCPreproc.hpp"
 #include "MakiWrapper.hpp"
+#include "ProgramPoint.hpp"
 #include "DefineSet.hpp"
 
 namespace Hayroll
@@ -506,6 +507,28 @@ struct PremiseTree
                 }
                 atoms.insert(name);
                 return std::format("feature = \"{}\"", name);
+            }
+            // TODO: handle is_distinct?
+            if (e.is_eq()) {
+                assert(e.num_args() == 2);
+                auto arg0 = e.arg(0);
+                assert(arg0.is_int());
+                auto arg1 = e.arg(0);
+                assert(arg1.is_int());
+                assert(arg1.is_const());
+
+                std::string name = arg0.decl().name().str();
+                auto value = arg1.as_int64();
+                if (name.rfind(DEFINE_PREFIX_INTEGER, 0) == 0)
+                {
+                    name = name.substr(3);
+                } else {
+                    throw std::runtime_error(std::format("Equality for non-integer variable: {}", name));
+                }
+                // TODO: handle DEFINE_PREFIX_EQUALITY?
+                auto assignmentName = std::format("{}_eq_{}", name, value);
+                atoms.insert(name);
+                return std::format("feature = \"{}\"", assignmentName);
             }
 
             // If we get here, it's some unsupported boolean operator or non-constant func.
