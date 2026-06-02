@@ -5,5 +5,6 @@
 
 #define DEFINE_PREFIX_PRESENT "def"
 #define DEFINE_PREFIX_INTEGER "val"
+#define DEFINE_PREFIX_EQUALITY "equ"
 
 #endif // HAYROLL_DEFINEPREFIX_HPP

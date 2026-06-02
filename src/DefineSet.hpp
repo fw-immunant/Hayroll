@@ -15,6 +15,16 @@
 #include "DefinePrefix.hpp"
 #include "Util.hpp"
 
+std::optional<std::pair<std::string, std::string>> parseAssignment(std::string& name) {
+    size_t equalsLoc = name.find("=");
+    if(equalsLoc == std::string::npos) {
+        return {};
+    }
+    std::string beforeEq = name.substr(0, equalsLoc);
+    std::string afterEq = name.substr(equalsLoc);
+    return {{beforeEq, afterEq}};
+}
+
 namespace Hayroll
 {
 
@@ -43,6 +53,16 @@ struct DefineSet
             {
                 bool boolValue = z3::eq(value, model.ctx().bool_val(true));
                 if (boolValue) defines.emplace(name, std::nullopt);
+            }
+            else if (prefix == DEFINE_PREFIX_EQUALITY)
+            {
+                bool boolValue = z3::eq(value, model.ctx().bool_val(true));
+                if (boolValue) defines.emplace(name, std::nullopt);
+                    /*auto parsed = parseAssignment(name);
+                    assert(parsed.has_value());
+                    auto [var, val] = parsed.value();
+                    defines.emplace(var, val);
+                    }*/
             }
             else assert(false);
         }
@@ -96,7 +116,7 @@ struct DefineSet
                 if (e.num_args() == 0)
                 {
                     std::string n = e.decl().name().str();
-                    if (n.starts_with(DEFINE_PREFIX_PRESENT) || n.starts_with(DEFINE_PREFIX_INTEGER))
+                    if (n.starts_with(DEFINE_PREFIX_PRESENT) || n.starts_with(DEFINE_PREFIX_INTEGER) || n.starts_with(DEFINE_PREFIX_EQUALITY))
                         seen.insert(n);
                 }
                 for (unsigned i = 0; i < e.num_args(); ++i) visit(e.arg(i));
@@ -110,16 +130,21 @@ struct DefineSet
             std::string prefix = fullName.substr(0, 3);
             std::string macroName = fullName.substr(3);
             auto it = defines.find(macroName);
-            if (prefix == DEFINE_PREFIX_PRESENT)
-            {
-                bool defined = (it != defines.end());
-                assigns = assigns && (ctx.bool_const(fullName.c_str()) == ctx.bool_val(defined));
-            }
-            else if (prefix == DEFINE_PREFIX_INTEGER)
+            if (prefix == DEFINE_PREFIX_INTEGER)
             {
                 int value = 0;
                 if (it != defines.end() && it->second.has_value()) value = it->second.value();
                 assigns = assigns && (ctx.int_const(fullName.c_str()) == ctx.int_val(value));
+            }
+            else if (prefix == DEFINE_PREFIX_PRESENT)
+            {
+                bool defined = (it != defines.end());
+                assigns = assigns && (ctx.bool_const(fullName.c_str()) == ctx.bool_val(defined));
+            }
+            else if (prefix == DEFINE_PREFIX_EQUALITY)
+            {
+                bool defined = (it != defines.end());
+                assigns = assigns && (ctx.bool_const(fullName.c_str()) == ctx.bool_val(defined));
             }
         }
 
