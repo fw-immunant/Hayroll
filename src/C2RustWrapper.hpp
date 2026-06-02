@@ -105,6 +105,7 @@ public:
         {
             std::ostringstream oss;
             oss << "C2Rust did not produce the expected output file: " << rustFilePath.string()
+                << "\nInvocation:\n" << argsStr.data()
                 << "\nOutput:\n" << out.buf.data()
                 << "\nError:\n" << err.buf.data();
             throw std::runtime_error(oss.str());
