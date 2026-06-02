@@ -523,6 +523,7 @@ private:
                     seedingReportEntries.end()
                 );
 
+                // For Cargo.toml generation (not inline cfgs)
                 result.rustFeatureAtoms.insert(candidate.rustFeatureAtoms.begin(), candidate.rustFeatureAtoms.end());
                 for (const auto & [name, _] : candidate.defineSet.defines)
                 {
