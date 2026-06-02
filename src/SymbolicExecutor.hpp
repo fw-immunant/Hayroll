@@ -194,7 +194,7 @@ public:
         // This does not apply to whitelisted macros.
         for (TSNode node : startWarp.programPoint.node.iterateDescendants())
         {
-            if (node.isSymbol(lang.preproc_def_s) || node.isSymbol(lang.preproc_function_def_s) || node.isSymbol(lang.preproc_undef_s))
+            if (node.isSymbol(lang.preproc_def_s) || node.isSymbol(lang.preproc_function_def_s) || node.isSymbol(lang.preproc_undef_s) || node.isSymbol(lang.preproc_include_s))
             {
                 // We need to undefine the macro in the symbol table.
                 // This is done by creating a new state with the same symbol table,
