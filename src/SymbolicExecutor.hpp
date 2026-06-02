@@ -272,6 +272,11 @@ public:
             startWarp.programPoint = startWarp.programPoint.nextSibling();
             return {std::move(startWarp)};
         }
+        else if (symbol == 65535)
+        {
+            // Tree-sitter parse error sentinel
+            return {executeError(std::move(startWarp))};
+        }
         else {assert(false); abort();}
     }
     
