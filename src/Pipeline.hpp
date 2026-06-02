@@ -525,9 +525,13 @@ private:
 
                 // For Cargo.toml generation (not inline cfgs)
                 result.rustFeatureAtoms.insert(candidate.rustFeatureAtoms.begin(), candidate.rustFeatureAtoms.end());
-                for (const auto & [name, _] : candidate.defineSet.defines)
+                for (const auto & [name, val] : candidate.defineSet.defines)
                 {
-                    result.rustFeatureAtoms.insert(DEFINE_PREFIX_PRESENT + name);
+                     if (val.has_value()) {
+                         result.rustFeatureAtoms.insert(DEFINE_PREFIX_INTEGER + name + "_eq_" + std::to_string(*val) );
+                     } else {
+                         result.rustFeatureAtoms.insert(DEFINE_PREFIX_PRESENT + name);
+                     }
                 }
 
                 {
