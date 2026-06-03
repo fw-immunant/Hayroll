@@ -154,8 +154,19 @@ private:
         SPDLOG_TRACE("Maki cpp2c error:\n{}", err.buf.data());
 
         // Should appear: outputDir/all_results.cpp2c
-        // Confirm that the file exists and return its content
         std::filesystem::path cpp2cFilePath = outputDir.getPath() / "all_results.cpp2c";
+
+        // Validate exit status
+        if (cpp2c.retcode() != 0)
+        {
+            std::ostringstream oss;
+            oss << "Maki cpp2c did not exit successfully when generating output file: " << cpp2cFilePath.string()
+                << "\nOutput:\n" << out.buf.data()
+                << "\nError:\n" << err.buf.data();
+            throw std::runtime_error(oss.str());
+        }
+
+        // Confirm that the file exists and return its content
         if (!std::filesystem::exists(cpp2cFilePath))
         {
             std::ostringstream oss;
