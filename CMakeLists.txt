@@ -150,8 +150,13 @@ target_link_libraries(tree_sitter_config INTERFACE
 include_directories(include)
 include_directories(src)
 
-add_executable(hayroll src/HayrollCLI.cpp)
+add_library(hayroll_common_objects OBJECT
+    src/ParseInteger.cpp
+)
+
+add_executable(hayroll  src/HayrollCLI.cpp)
 target_link_libraries(hayroll PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -240,6 +245,7 @@ add_test(
 
 add_executable(MacroExpander_test tests/MacroExpander_test.cpp)
 target_link_libraries(MacroExpander_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -253,6 +259,7 @@ add_test(
 
 add_executable(SymbolicExecutor_test tests/SymbolicExecutor_test.cpp)
 target_link_libraries(SymbolicExecutor_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -266,6 +273,7 @@ add_test(
 
 add_executable(LineMatcher_test tests/LineMatcher_test.cpp)
 target_link_libraries(LineMatcher_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -279,6 +287,7 @@ add_test(
 
 add_executable(Seeder_test tests/Seeder_test.cpp)
 target_link_libraries(Seeder_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -292,6 +301,7 @@ add_test(
 
 add_executable(Pipeline_test tests/Pipeline_test.cpp)
 target_link_libraries(Pipeline_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
@@ -305,6 +315,7 @@ add_test(
 
 add_executable(DuplicateCompileCommands_test tests/DuplicateCompileCommands_test.cpp)
 target_link_libraries(DuplicateCompileCommands_test PRIVATE
+    hayroll_common_objects
     hayroll_exe_config
     external_exe_config
     z3_config
