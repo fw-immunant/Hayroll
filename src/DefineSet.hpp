@@ -72,6 +72,11 @@ struct DefineSet
         const std::unordered_map<std::string, std::optional<int64_t>> & defines
     ) : defines(defines)
     {
+        #ifdef DEBUG
+        for (const auto& [key, _] : defines) {
+            assert(key.find("=") == std::string::npos);
+        }
+        #endif
     }
 
     std::vector<std::string> toOptions() const
