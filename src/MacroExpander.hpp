@@ -99,7 +99,7 @@ public:
         // expanding the macro they were expanded from, and that info is recoded in the UndefStackSymbolTable
         // I mentionend "a segment", but there actually is a stack of segments (if there are nested macros)
         //
-        // As we pop from the stack, we care about two types of atoms: identifier, and preproc_defined_literal
+        // As we pop from the stack, we care about two types of atoms: identifier, and preproc_defined_literal ("defined(...)")
         // identifier: look up in the symbol table
         //     if defined as ObjectSymbol: push its tokens into the stack, add its name to the undef stack
         //     if defined as FunctionSymbol: look forward for paring parenthesis
