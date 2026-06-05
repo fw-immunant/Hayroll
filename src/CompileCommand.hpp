@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -15,6 +16,7 @@
 #include "Util.hpp"
 #include "TempDir.hpp"
 #include "DefineSet.hpp"
+#include "ParseInteger.hpp"
 
 namespace Hayroll
 {
@@ -67,6 +69,36 @@ struct CompileCommand
             paths.push_back(absolutePath);
         }
         return paths;
+    }
+
+    DefineSet getDefineSet() const
+    {
+        std::vector<std::string> newArgs;
+        std::unordered_map<std::string, std::optional<int64_t>> defines;
+        for (const auto & arg : arguments)
+        {
+            if (arg.starts_with("-D")) {
+                const std::string& define_flag = arg.substr(2);
+                auto parsed = parseAssignment(define_flag);
+                if (parsed.has_value()) {
+                    auto [var, val] = parsed.value();
+                    try {
+                        int64_t intVal = std::stoll(parseIntegerLiteralToDecimal(val));
+                        std::optional<int64_t> opt = intVal;
+                        std::string key = var;
+                        defines.emplace(key, opt);
+                    } catch (...) {
+                        std::string flag_replaced = define_flag;
+                        replace_substring(flag_replaced, "=", "$eq$");
+                        defines.emplace(flag_replaced, std::nullopt);
+                    }
+                } else {
+                    defines.emplace(define_flag, std::nullopt);
+                }
+            }
+            newArgs.push_back(arg);
+        }
+        return DefineSet(defines);
     }
 
     CompileCommand withUpdatedFilePathPrefix
