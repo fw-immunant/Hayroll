@@ -30,6 +30,8 @@ namespace Hayroll
 
 struct DefineSet
 {
+    // A map which maps integer macros to their values, merely-defined macros to std::nullopt,
+    // and for string-defined macros maps a string of the form "NAME$eq$VALUE" to std::nullopt.
     std::unordered_map<std::string, std::optional<int64_t>> defines;
 
     DefineSet() = default;
@@ -57,12 +59,9 @@ struct DefineSet
             else if (prefix == DEFINE_PREFIX_EQUALITY)
             {
                 bool boolValue = z3::eq(value, model.ctx().bool_val(true));
-                if (boolValue) defines.emplace(name, std::nullopt);
-                    /*auto parsed = parseAssignment(name);
-                    assert(parsed.has_value());
-                    auto [var, val] = parsed.value();
-                    defines.emplace(var, val);
-                    }*/
+                std::string name_replaced = name;
+                replace_substring(name_replaced, "=", "$eq$");
+                if (boolValue) defines.emplace(name_replaced, std::nullopt);
             }
             else assert(false);
         }
@@ -82,7 +81,9 @@ struct DefineSet
         {
             if (!val.has_value())
             {
-                options.push_back(std::format("-D{}", name));
+                std::string name_replaced = name;
+                replace_substring(name_replaced, "$eq$", "=");
+                options.push_back(std::format("-D{}", name_replaced));
             }
             else
             {

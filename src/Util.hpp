@@ -556,6 +556,16 @@ std::string escapeString(std::string_view str)
     return escaped;
 }
 
+// Adapted from nlohmann::json
+void replace_substring(std::string& s, const std::string& f, const std::string& t)
+{
+    for (auto pos = s.find(f);                // find first occurrence of f
+            pos != std::string::npos;          // make sure f was found
+            s.replace(pos, f.size(), t),      // replace with t, and
+            pos = s.find(f, pos + t.size()))  // find next occurrence of f
+    {}
+}
+
 } // namespace Hayroll
 
 #endif // HAYROLL_UTIL_HPP
