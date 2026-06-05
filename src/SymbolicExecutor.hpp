@@ -175,10 +175,23 @@ public:
         // The initial state is the root node of the tree.
         State startState{builtinMacroSymbolTable, ctx->bool_val(true)};
         Warp startWarp{ProgramPoint{includeTree, root}, {std::move(startState)}};
-        // Start the premise tree with a true premise.
+        // Start the premise tree with the conjunction of all command-line macros.
+        z3::expr conjExpr = ctx->bool_val(true);
+        for (const auto& [define, val] : predefMacros.defines) {
+            if (val.has_value()) {
+                conjExpr = conjExpr && ctx->int_const(define.c_str()) == ctx->int_val(*val);
+            } else {
+                if(define.find("$eq$") != std::string::npos) {
+                    conjExpr = conjExpr && ctx->bool_const(define.c_str());
+                } else {
+                    conjExpr = conjExpr && ctx->bool_const(define.c_str());
+                }
+            }
+        }
+        z3::expr basePremise = conjExpr;
         // When a state reaches an #error, it does not stop, instead, it conjuncts the negation
         // of its premise to the root node of the premise tree.
-        scribe = PremiseTreeScribe(startWarp.programPoint, ctx->bool_val(true));
+        scribe = PremiseTreeScribe(startWarp.programPoint, basePremise);
         Warp endWarp = executeTranslationUnit(std::move(startWarp));
         
         return endWarp;
