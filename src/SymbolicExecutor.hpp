@@ -127,6 +127,7 @@ public:
     SymbolTablePtr symbolTableRoot;
     PremiseTreeScribe scribe;
     std::optional<std::vector<std::string>> macroWhitelist;
+    DefineSet predefMacros;
 
     bool analyzeInvocations;
 
@@ -134,6 +135,7 @@ public:
     (
         std::filesystem::path srcPath,
         std::filesystem::path projPath,
+        DefineSet predefMacros,
         const std::vector<std::filesystem::path> & includePaths = {},
         std::optional<std::vector<std::string>> macroWhitelist = std::nullopt,
         bool analyzeInvocations = false
@@ -143,7 +145,8 @@ public:
           astBank(lang), macroExpander(lang, ctx.get()),
           includeTree(IncludeTree::make(TSNode{}, std::filesystem::canonical(srcPath))),
           symbolTableRoot(SymbolTable::make(SymbolSegment::make(), nullptr, macroWhitelist)),
-          scribe(), analyzeInvocations(analyzeInvocations), macroWhitelist(macroWhitelist)
+          scribe(), analyzeInvocations(analyzeInvocations), macroWhitelist(macroWhitelist),
+          predefMacros(predefMacros)
     {
         astBank.addFileOrFind(srcPath);
     }

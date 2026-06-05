@@ -270,7 +270,7 @@ private:
     {
         const std::filesystem::path & srcPath = command.file;
         CommandResult result;
-        SymbolicExecutor executor(srcPath, projDir, command.getIncludePaths(), symbolicMacroWhitelist, false);
+        SymbolicExecutor executor(srcPath, projDir, command.getDefineSet(), command.getIncludePaths(), symbolicMacroWhitelist, false);
         PremiseTree * premiseTree = nullptr;
         {
             StageTimer::Scope stage(stageTimer, StageNames::Pioneer);
