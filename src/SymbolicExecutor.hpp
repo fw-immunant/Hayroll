@@ -135,10 +135,10 @@ public:
     (
         std::filesystem::path srcPath,
         std::filesystem::path projPath,
-        DefineSet predefMacros,
         const std::vector<std::filesystem::path> & includePaths = {},
         std::optional<std::vector<std::string>> macroWhitelist = std::nullopt,
-        bool analyzeInvocations = false
+        bool analyzeInvocations = false,
+        DefineSet predefMacros = DefineSet()
     )
         : lang(CPreproc()), ctx(std::make_unique<z3::context>()), srcPath(std::filesystem::canonical(srcPath)),
           projPath(std::filesystem::canonical(projPath)), includeResolver(ClangExe, includePaths),
