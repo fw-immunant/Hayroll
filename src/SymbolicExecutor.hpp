@@ -110,6 +110,23 @@ struct Warp
     }
 };
 
+z3::expr macroValExpr(const std::string& name, std::unique_ptr<z3::context>& ctx) {
+    // Do not look up the symbol in the symbol table
+    // Any symbol at this time will be treated as a symbolic value
+    std::string defName = std::format(DEFINE_PREFIX_PRESENT "{}", name);
+    std::string valName = std::format(DEFINE_PREFIX_INTEGER "{}", name);
+
+    z3::expr def = ctx->bool_const(defName.c_str());
+    z3::expr val = ctx->int_const(valName.c_str());
+
+    auto constExpr0 = ctx->int_val(0);
+
+    // Create the expression
+    z3::expr iteExpr = z3::ite(def, val, constExpr0);
+    return iteExpr;
+}
+
+
 class SymbolicExecutor
 {
 public:
@@ -170,15 +187,45 @@ public:
         SymbolTablePtr builtinMacroSymbolTable = predefinedMacroWarp.states[0].symbolTable;
         assert(builtinMacroSymbolTable != nullptr);
 
+        SymbolSegmentPtr segment = SymbolSegment::make();
+        z3::expr conjExpr = ctx->bool_val(true);
+        for (const auto& [define, val] : predefMacros.defines) {
+            std::string strVal;
+            if (val.has_value()) {
+                conjExpr = conjExpr && macroValExpr(define, ctx) == ctx->int_val(*val);
+                strVal = std::to_string(*val);
+            } else {
+                if(define.find("$eq$") != std::string::npos) {
+                    std::string z3VarName(DEFINE_PREFIX_EQUALITY);
+                    z3VarName += define;
+                    conjExpr = conjExpr && ctx->bool_const(z3VarName.c_str());
+                    strVal = define.substr(define.find("$eq$") + 4);
+                } else {
+                    std::string z3VarName(DEFINE_PREFIX_PRESENT);
+                    z3VarName += define;
+                    conjExpr = conjExpr && ctx->bool_const(z3VarName.c_str());
+                    strVal = "1";
+                }
+            }
+            const TSTree & valTree = astBank.addAnonymousSource(std::move(strVal));
+            TSNode valNode = valTree.rootNode();
+            ProgramPoint dflagProgramPoint{IncludeTree::make(TSNode{}, "<-D flag>"), valNode};
+            segment->define(ObjectSymbol{define, dflagProgramPoint, valNode});
+        }
+        builtinMacroSymbolTable = builtinMacroSymbolTable->define(segment);
+
         const TSTree & tree = astBank.find(srcPath);
         TSNode root = tree.rootNode();
         // The initial state is the root node of the tree.
-        State startState{builtinMacroSymbolTable, ctx->bool_val(true)};
+        State startState{builtinMacroSymbolTable, conjExpr};//ctx->bool_val(true)};
         Warp startWarp{ProgramPoint{includeTree, root}, {std::move(startState)}};
-        // Start the premise tree with a true premise.
+
+        // Start the premise tree with the conjunction of all command-line macros.
+        z3::expr basePremise = conjExpr;
         // When a state reaches an #error, it does not stop, instead, it conjuncts the negation
         // of its premise to the root node of the premise tree.
-        scribe = PremiseTreeScribe(startWarp.programPoint, ctx->bool_val(true));
+        scribe = PremiseTreeScribe(startWarp.programPoint, basePremise);
+        SPDLOG_TRACE("baseTree: {}", scribe.borrowTree()->toString());
         Warp endWarp = executeTranslationUnit(std::move(startWarp));
         
         return endWarp;
