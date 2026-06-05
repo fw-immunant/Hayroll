@@ -15,7 +15,7 @@
 #include "DefinePrefix.hpp"
 #include "Util.hpp"
 
-std::optional<std::pair<std::string, std::string>> parseAssignment(std::string& name) {
+std::optional<std::pair<std::string, std::string>> parseAssignment(const std::string& name) {
     size_t equalsLoc = name.find("=");
     if(equalsLoc == std::string::npos) {
         return {};
