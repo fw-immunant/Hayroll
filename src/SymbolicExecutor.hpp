@@ -274,6 +274,7 @@ public:
         }
         else if (symbol == 65535)
         {
+            SPDLOG_TRACE("Encountered parse error at: {}", startWarp.programPoint.toString());
             // Tree-sitter parse error sentinel
             return {executeError(std::move(startWarp))};
         }
