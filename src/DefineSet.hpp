@@ -38,11 +38,13 @@ struct DefineSet
 
     DefineSet(const z3::model & model)
     {
+        SPDLOG_DEBUG("creating defineset from model; size={}", model.size());
         for (unsigned i = 0; i < model.size(); i++)
         {
             z3::func_decl v = model[i];
             assert(v.arity() == 0); // only constants
             std::string z3VarName = v.name().str();
+            SPDLOG_DEBUG("defineset var {}: {}", i, z3VarName);
             std::string prefix = z3VarName.substr(0, 3); // all DEFINE_PREFIX_... are 3 characters long
             std::string name = z3VarName.substr(3);
             z3::expr value = model.get_const_interp(v);
