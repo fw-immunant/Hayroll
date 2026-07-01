@@ -92,17 +92,20 @@ private:
     {
         if (feedback.kind == Initial)
         {
+            SPDLOG_DEBUG("removeSatisfiedNodes feedback=Initial, no-op");
             return;
         }
         else if (feedback.kind == Success)
         {
+            SPDLOG_DEBUG("before removeSatisfiedNodes: {}", lastDefineSet->toString());
             removeSatisfiedNodes(*lastDefineSet);
+            SPDLOG_DEBUG("after removeSatisfiedNodes: {}", lastDefineSet->toString());
         }
         else if (feedback.kind == Fail)
         {
             std::string stageStr = feedback.stage.empty() ? "" : std::format(" at stage {}", feedback.stage);
             std::string reasonStr = feedback.reason.empty() ? "" : std::format(" ({})", feedback.reason);
-            SPDLOG_TRACE
+            SPDLOG_DEBUG
             (
                 "Splitter treating DefineSet {} as failed{}{}.",
                 lastDefineSet->toString(),
@@ -134,6 +137,12 @@ private:
             }
             else
             {
+                SPDLOG_TRACE
+                (
+                    "DefineSet {} does not satisfy premise tree node {}, incrementing.",
+                    defineSet.toString(),
+                    otherNode->toString()
+                );
                 ++it;
             }
         }
