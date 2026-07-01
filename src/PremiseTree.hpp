@@ -176,7 +176,9 @@ struct PremiseTree
 
     z3::model getModel() const
     {
+        SPDLOG_DEBUG("premise in getModel: {}", premise.to_string());
         z3::expr complete = getCompletePremise();
+        SPDLOG_DEBUG("complete premise in getModel: {}", complete.to_string());
         z3::solver s(complete.ctx());
         s.add(complete);
         z3::check_result r = s.check();
