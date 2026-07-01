@@ -15,6 +15,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -gdwarf-2 -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
