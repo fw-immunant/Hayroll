@@ -68,6 +68,7 @@ std::string_view symbolName(const Symbol & symbol)
     return std::visit([](const auto & s) { return s.name; }, symbol);
 }
 
+// Return the ProgramPoint for the definition of this preprocessor symbol
 const ProgramPoint & symbolProgramPoint(const Symbol & symbol)
 {
     if (std::holds_alternative<ObjectSymbol>(symbol))
@@ -81,6 +82,7 @@ const ProgramPoint & symbolProgramPoint(const Symbol & symbol)
     else {assert(false); abort();}
 }
 
+// Return the ProgramPoint for the body of this preprocessor symbol's definition
 const TSNode & symbolBody(const Symbol & symbol)
 {
     if (std::holds_alternative<ObjectSymbol>(symbol))
