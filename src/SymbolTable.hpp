@@ -250,7 +250,7 @@ public:
         return std::nullopt;
     }
 
-    std::string toString(int maxEntries = 9999) const
+    std::string toString(int maxEntries = 10) const
     {
         return symbols->toString(maxEntries);
     }
