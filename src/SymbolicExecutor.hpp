@@ -236,6 +236,7 @@ public:
         SPDLOG_TRACE("Executing translation unit: {}", startWarp.programPoint.toString());
         assert(startWarp.programPoint.node.isSymbol(lang.translation_unit_s));
 
+        // This only handles the scan for #define/#undef! We do this before actually iterating in `executeInLockStep`.
         // Key assumption: any macro name that is ever defined or undefined in the code,
         // it is not intended to be supplemented by the user from the command line (-D).
         // An example of this is header guard macros.
@@ -565,7 +566,7 @@ public:
             Warp thenWarp{{includeTree, body}, {}};
             Warp elseWarp{{includeTree, alternative}, {}};
 
-            std::vector<TSNode> tokenList;
+            std::vector<TSNode> tokenList; // Tokens on which this branch depends.
             MacroExpander::Prepend prepend = MacroExpander::Prepend::None;
             // #if and #elif have field "condition".
             if (node.isSymbol(lang.preproc_if_s) || node.isSymbol(lang.preproc_elif_s))
