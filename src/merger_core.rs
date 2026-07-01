@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, path::Path};
+use std::{collections::HashMap, fs, path::Path, time::Duration};
 
 use anyhow::Result;
 use ide::RootDatabase;
@@ -16,7 +16,12 @@ use vfs::FileId;
 use crate::hayroll_ds::*;
 use crate::util::*;
 
-pub fn run(base_workspace_path: &Path, patch_workspace_path: &Path, _keep_src_loc: bool) -> Result<()> {
+pub fn run(
+    base_workspace_path: &Path,
+    patch_workspace_path: &Path,
+    _keep_src_loc: bool,
+) -> Result<()> {
+    //std::thread::sleep(Duration::from_hours(1));
     let cargo_config = CargoConfig::default();
     let load_cargo_config = load_cargo::LoadCargoConfig {
         load_out_dirs_from_check: false,
