@@ -812,6 +812,7 @@ public:
 
                     for (std::size_t variantIdx = 0; variantIdx < task.variants.size(); ++variantIdx)
                     {
+                        SPDLOG_INFO("running variant task {}/{}", variantIdx, task.variants.size());
                         const CompileCommand & command = task.variants[variantIdx];
                         const std::optional<std::string> artifactSuffix =
                             task.variants.size() > 1 ? std::make_optional(std::format(".variant{}", variantIdx)) : std::nullopt;
