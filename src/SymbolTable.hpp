@@ -136,9 +136,20 @@ public:
     std::string toString(int maxEntries = 10) const
     {
         std::stringstream ss;
-        int count = 0;
+        int idx = 0;
+        auto total = symbols.size();
         for (const auto & [name, symbol] : symbols)
         {
+            if (maxEntries > 0 && idx == maxEntries / 2)
+            {
+                ss << "...\n";
+            }
+            // skip items in the middle if total > maxEntries
+            if (idx >= maxEntries / 2 && idx < total - (maxEntries + 1) / 2) {
+                idx++;
+                continue;
+            }
+
             std::visit
             (
                 overloaded
@@ -161,12 +172,7 @@ public:
                 symbol
             );
             ss << "\n";
-            count++;
-            if (maxEntries > 0 && count >= maxEntries)
-            {
-                ss << "...\n";
-                break;
-            }
+            idx++;
         }
         return ss.str();
     }
