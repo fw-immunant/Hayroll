@@ -189,7 +189,6 @@ struct PremiseTree
     DefineSet getDefineSet() const
     {
         auto set = DefineSet(getModel());
-        set.defines["PARAMS=sphincs-haraka-128s"] = std::nullopt;
         return set;
     }
 
