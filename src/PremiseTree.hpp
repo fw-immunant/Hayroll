@@ -495,6 +495,12 @@ struct PremiseTree
             if (e.is_app() && e.num_args() == 0)
             {
                 std::string name = e.decl().name().str();
+                if (name.find(DEFINE_PREFIX_EQUALITY, 0) == 0)
+                {
+                    replace_substring(name, "$eq$", "_eq_");
+                    atoms.insert(name.substr(strlen(DEFINE_PREFIX_EQUALITY)));
+                    return std::format("feature = \"{}\"", name);
+                }
                 if (name.rfind(DEFINE_PREFIX_INTEGER, 0) == 0)
                 {
                     throw std::runtime_error(std::format("Found integer variable in boolean premise ({}XXX not allowed): {}",
