@@ -93,3 +93,4 @@ output*/
 /temp/
 /.checkbashisms
 .gdb_history
+*.expected.rs
