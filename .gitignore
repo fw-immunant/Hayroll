@@ -92,3 +92,4 @@ output*/
 /note*
 /temp/
 /.checkbashisms
+.gdb_history
