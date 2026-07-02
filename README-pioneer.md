@@ -23,7 +23,7 @@ Pioneer is part of the Hayroll pipeline. According to Pioneer's output, Hayroll
 runs the preprocessor multiple times with different macro definitions, runs
 `c2rust` on each, and then merges all the resulting Rust programs into a single
 Rust implementation that uses Rust's `#cfg` macros. The algorithm that decides
-what macro definition conbinations to run with and how many total runs are
+what macro definition combinations to run with and how many total runs are
 needed is still work-in-progress.
 
 ## Input and Output
