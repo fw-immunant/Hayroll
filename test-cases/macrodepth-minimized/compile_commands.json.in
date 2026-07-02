@@ -1,0 +1,14 @@
+[
+{
+  "directory": "$TEST_CASE_DIR/build",
+  "command": "/usr/bin/clang -DOP=sub -DREPEAT=3 -o $TEST_CASE_DIR/build/mdcore.c.o -c $TEST_CASE_DIR/mdcore.c",
+  "file": "$TEST_CASE_DIR/mdcore.c",
+  "output": "$TEST_CASE_DIR/build/mdcore.c.o"
+},
+{
+  "directory": "$TEST_CASE_DIR/build",
+  "command": "/usr/bin/clang -DOP=sub -DREPEAT=3 -o $TEST_CASE_DIR/build/mdmain.c.o -c $TEST_CASE_DIR/mdmain.c",
+  "file": "$TEST_CASE_DIR/mdmain.c",
+  "output": "$TEST_CASE_DIR/build/mdmain.c.o"
+}
+]
